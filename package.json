@@ -1,0 +1,37 @@
+{
+  "name": "cryptodashboard",
+  "version": "1.0.0",
+  "description": "cryptodashboard",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kanthgithub/cryptodashboard.git"
+  },
+  "keywords": [
+    "nodeJS"
+  ],
+  "author": "lakshmikanth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kanthgithub/cryptodashboard/issues"
+  },
+  "homepage": "https://github.com/kanthgithub/cryptodashboard#readme",
+  "dependencies": {
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "http-errors": "~1.6.2",
+    "morgan": "~1.9.0",
+    "dotenv": "^5.0.1",
+    "pug": "2.0.0-beta11",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-ejs-layouts": "^2.5.0",
+    "mongoose": "^5.3.14",
+    "mongoose-long": "^0.2.0",
+    "path": "^0.12.7",
+    "fs": "0.0.1-security"
+  }
+}
