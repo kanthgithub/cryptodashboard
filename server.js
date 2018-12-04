@@ -1,13 +1,8 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var server = express();
+//grab dependencies
+const express = require('express'),
+    app = express(),
+    port = process.env.PORT || 8080,
+    expressLayouts = require('express-ejs-layouts');
 
 // Configuring the database
 const dbConfig = require('./config/database.config.js');
@@ -26,27 +21,54 @@ mongoose.connect(dbConfig.url)
 
 
 
+//configure application
+var logger = require('morgan');
+
+app.use(logger('dev'));                                         // log every request to the console
+app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
+app.use(bodyParser.json());                                     // parse application/json
+app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
+
+//routes
+
+//app.use('/', indexRouter);
+//app.use('/users', usersRouter);
+
+//var indexRouter = require('./app/routes/index');
+//var usersRouter = require('./app/routes/users');
+
+//set the routes
+app.use(require('./app/routes'));
+app.use(expressLayouts);
+
 
 // view engine setup
-server.set('views', path.join(__dirname, 'views'));
-server.set('view engine', 'pug');
+var path = require('path');
 
-server.use(logger('dev'));
-server.use(express.json());
-server.use(express.urlencoded({ extended: false }));
-server.use(cookieParser());
-server.use(express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
-server.use('/', indexRouter);
-server.use('/users', usersRouter);
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+var cookieParser = require('cookie-parser');
+
+app.use(cookieParser());
+
+//tell express on where to look for static-assets
+//app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname + '/public'));
+
+var createError = require('http-errors');
 
 // catch 404 and forward to error handler
-server.use(function(req, res, next) {
+app.use(function(req, res, next) {
   next(createError(404));
 });
 
 // error handler
-server.use(function(err, req, res, next) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -54,6 +76,14 @@ server.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+
+//start server
+app.listen(port,() => {
+
+    console.log(`cryptodashboard App listening on http://locahost:${port}`);
+
 });
 
 
