@@ -1,8 +1,20 @@
 //grab dependencies
+require('dotenv').config();
+
+
 const express = require('express'),
     app = express(),
-    port = process.env.PORT || 8080,
+    port = process.env.PORT || 3000,
     expressLayouts = require('express-ejs-layouts');
+
+
+let morgan = require('morgan');
+
+//don't show the log when it is test
+if(process.env.nodeEnvironment !== 'test') {
+    //use morgan to log at command line
+    app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
+}
 
 // Configuring the database
 const dbConfig = require('./config/database.config.js');
@@ -23,19 +35,13 @@ mongoose.connect(dbConfig.url)
 
 //configure application
 var logger = require('morgan');
+var bodyParser = require('body-parser');
 
 app.use(logger('dev'));                                         // log every request to the console
 app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
 app.use(bodyParser.json());                                     // parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 
-//routes
-
-//app.use('/', indexRouter);
-//app.use('/users', usersRouter);
-
-//var indexRouter = require('./app/routes/index');
-//var usersRouter = require('./app/routes/users');
 
 //set the routes
 app.use(require('./app/routes'));
@@ -82,10 +88,10 @@ app.use(function(err, req, res, next) {
 //start server
 app.listen(port,() => {
 
-    console.log(`cryptodashboard App listening on http://locahost:${port}`);
+    console.log(`cryptodashboard App listening on http://localhost:${port}`);
 
 });
 
 
 
-module.exports = server;
+module.exports = app;

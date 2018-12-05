@@ -1,0 +1,16 @@
+version: '2'
+services:
+  cryptodashboard:
+    build:
+      context: ./
+    image: cryptodashboard
+    env_file:
+      - ./env
+    links:
+      - cryptodashboard-mongo
+    ports:
+      - "3000:3000"
+    tty: true
+  cryptodashboard-mongo:
+    image: mongo
+    restart: on-failure
