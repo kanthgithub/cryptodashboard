@@ -3,7 +3,6 @@ require('mongoose-long')(mongoose);
 var Long = mongoose.Schema.Types.Long;
 
 const tickerdataSchema = mongoose.Schema({
-    tickerIndex:  {type:Number, default:0},
     id: String,
     name: String,
     symbol: String,
@@ -39,4 +38,25 @@ module.exports.getAllTickers = function(callback) {
 
 module.exports.deleteAllTickers = function (callback) {
     tickerDataEntity.deleteMany({},callback);
+}
+
+module.exports.saveOrUpdate = function (tickerDataEntityToPersist) {
+
+    exports.getTickerBySymbol(tickerDataEntityToPersist.symbol).then((model) => {
+                                return Object.assign(model,
+                                    {
+                                        totalSupply: tickerDataEntityToPersist.symbol,
+                                        maximumSupply: tickerDataEntityToPersist.maximumSupply,
+                                        rank: tickerDataEntityToPersist.rank,
+                                        availableSupply: tickerDataEntityToPersist.availableSupply
+                                    }).then( (model) => {
+                                                return model.save();
+                                            })
+                                      .then((updatedModel) => {
+                                            return updatedModel;
+                                      }).catch((err) => {
+                                          return null;
+                                    });
+                            });
+
 }

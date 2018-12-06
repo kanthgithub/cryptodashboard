@@ -24,33 +24,28 @@ module.exports = {
             })
     },
 
-    deleteTickers : tickerDataRef.deleteAllTickers(function(error,response){
-        if(error){
-            console.error("failed to cleanup tickerData");
-        } else{
-            console.log("successfully deleted tickerData");
-            console.log(response);
-        }
-    }),
-
-
     loadTickerData: (request,response) => {
+
+        function cleanupTickerDataBeforeRefresh() {
+            await(function () {
+                tickerDataRef.deleteAllTickers(function (error, response) {
+                    if (error) {
+                        console.error("failed to cleanup tickerData");
+                    } else {
+                        console.log("successfully deleted tickerData");
+                        console.log(response);
+                    }
+                })
+            })
+        }
 
         // Get all available coins from CoinMarketCap API.
         axios.get(process.env.COINMARKET_API).then((apiResponse) => {
 
             if (apiResponse.status === 200) {
 
-
-              setTimeout( deleteTickers ,100),
-
-                tickerDataRef.getAllTickers(function (error,response) {
-                   if(error){
-                       console.log('no tickers');
-                   } else{
-                       console.log('tickerdata extracted: '+response);
-                   }
-                });
+                //blocking call to refresh ticker-data
+                cleanupTickerDataBeforeRefresh();
 
                 let coins = {};
 
@@ -62,17 +57,12 @@ module.exports = {
                     tickerdataEntityObject.name = coin.name;
                     tickerdataEntityObject.symbol = coin.symbol;
                     tickerdataEntityObject.rank = coin.rank;
-                    tickerdataEntityObject.maximumSupply = coin.maximumSupply;
-                    tickerdataEntityObject.totalSupply = coin.totalSupply;
-                    tickerdataEntityObject.availableSupply = coin.availableSupply;
-
-                    console.log('saving tickerdataEntity: '+tickerdataEntityObject);
+                    tickerdataEntityObject.maximumSupply = coin.max_supply;
+                    tickerdataEntityObject.totalSupply = coin.total_supply;
+                    tickerdataEntityObject.availableSupply = coin.available_supply;
 
                     tickerdataEntityObject.save();
-
-                    return null
                 });
-
 
             }
         });
