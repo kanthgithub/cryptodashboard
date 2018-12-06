@@ -1,4 +1,4 @@
-//create express router
+//create express router and import controllers to load , refresh and get market/ticker data
 const express = require('express'),
         router = express.Router(),
         mainController = require('./controllers/main.controller'),
@@ -8,9 +8,15 @@ const express = require('express'),
 //define routes
 router.get('/',mainController.showHome);
 
-router.get('/marketdata',marketdataController.showMarketData);
+//get latest marketInformation
+router.get('/marketData',marketdataController.showMarketData);
 
-router.get('/tickerdata',tickerdataController.getTickerData);
+//get ticker details available for marketUpdates
+router.get('/tickerData',tickerdataController.getTickerData);
+
+//load the tickerDetails from coinbase-API to mongodb
+router.post('/loadTickerData', tickerdataController.loadTickerData);
+
 
 //export Router
 module.exports = router;

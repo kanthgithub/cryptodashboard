@@ -85,13 +85,17 @@ app.use(function(err, req, res, next) {
 });
 
 
+//import ticker data from coinbase-API to database
+var refreshTool = require("./app/controllers/tickerdata.controller");
+refreshTool.loadTickerData();
+
+
 //start server
 app.listen(port,() => {
 
     console.log(`cryptodashboard App listening on http://localhost:${port}`);
 
 });
-
 
 
 module.exports = app;
