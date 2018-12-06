@@ -36,3 +36,8 @@
 - Integration testing on mongodb - reference taken from 
    - https://www.toptal.com/nodejs/integration-and-e2e-tests-nodejs-mongodb
    - https://github.com/kanthgithub/mongo-unit
+
+## Configuration:
+
+https://12factor.net/config is followed to maintain application configuration
+
