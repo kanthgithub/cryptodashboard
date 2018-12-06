@@ -33,4 +33,6 @@
 
 - To run mocha I added the flag --timeout 10000 because I fetch data from a database hosted on mongolab
 - So the default 2 seconds may not be enough.
-
+- Integration testing on mongodb - reference taken from 
+   - https://www.toptal.com/nodejs/integration-and-e2e-tests-nodejs-mongodb
+   - https://github.com/kanthgithub/mongo-unit
