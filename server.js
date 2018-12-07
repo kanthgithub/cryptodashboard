@@ -47,6 +47,19 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(require('./app/routes'));
 app.use(expressLayouts);
 
+const cors = require('cors');
+
+app.use(cors());
+
+const jwt = require('./app/authentication/jwt');
+
+// use JWT auth to secure the api
+app.use(jwt());
+
+const errorHandler = require('./app/authentication/error-handler');
+
+// global error handler
+app.use(errorHandler);
 
 // view engine setup
 var path = require('path');
