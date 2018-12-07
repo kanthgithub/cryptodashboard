@@ -26,6 +26,8 @@ module.exports = {
 
     loadTickerData: (request,response) => {
 
+        console.log("attempting to cleanup data:")
+
         function cleanupTickerDataBeforeRefresh() {
             await(function () {
                 tickerDataRef.deleteAllTickers(function (error, response) {
@@ -44,6 +46,9 @@ module.exports = {
 
             if (apiResponse.status === 200) {
 
+                console.log("fetched API data - attempting to cleanup data and load fresh:")
+
+
                 //blocking call to refresh ticker-data
                 cleanupTickerDataBeforeRefresh();
 
@@ -60,6 +65,9 @@ module.exports = {
                     tickerdataEntityObject.maximumSupply = coin.max_supply;
                     tickerdataEntityObject.totalSupply = coin.total_supply;
                     tickerdataEntityObject.availableSupply = coin.available_supply;
+
+                    console.log("loading fresh data:"+tickerdataEntityObject)
+
 
                     tickerdataEntityObject.save();
                 });
