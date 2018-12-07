@@ -1,10 +1,10 @@
 //create express router and import controllers to load , refresh and get market/ticker data
 const express = require('express'),
         router = express.Router(),
-        mainController = require('./controllers/main.controller'),
-        marketdataController = require('./controllers/marketdata.controller'),
-        tickerdataController = require('./controllers/tickerdata.controller'),
-        userController = require('./controllers/users.controller');
+        mainController = require('../controllers/main.controller'),
+        marketdataController = require('../controllers/marketdata.controller'),
+        tickerdataController = require('../controllers/tickerdata.controller'),
+        userController = require('../controllers/users.controller');
 
 
 //define routes
