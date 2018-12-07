@@ -44,17 +44,12 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 
 
 //set the routes
-app.use(require('./app/routes'));
+app.use(require('./app/routes/routes'));
 app.use(expressLayouts);
 
 const cors = require('cors');
 
 app.use(cors());
-
-const jwt = require('./app/authentication/jwt');
-
-// use JWT auth to secure the api
-app.use(jwt());
 
 const errorHandler = require('./app/authentication/error-handler');
 
@@ -79,12 +74,6 @@ app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname + '/public'));
 
-var createError = require('http-errors');
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
 
 // error handler
 app.use(function(err, req, res, next) {

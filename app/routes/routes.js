@@ -19,9 +19,6 @@ router.get('/tickerData',tickerdataController.getTickerData);
 //load the tickerDetails from coinbase-API to mongodb
 router.post('/loadTickerData', tickerdataController.loadTickerData);
 
-//user registration , update and retrieval routes
-router.post('/authenticateUser', userController.authenticate);
-
 router.post('/registerUser', userController.register);
 
 router.get('/users', userController.getAll);
