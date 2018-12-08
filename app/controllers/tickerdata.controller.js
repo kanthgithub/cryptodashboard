@@ -26,31 +26,12 @@ module.exports = {
 
     loadTickerData: (request,response) => {
 
-        console.log("attempting to cleanup data:")
-
-        function cleanupTickerDataBeforeRefresh() {
-            await(function () {
-                tickerDataRef.deleteAllTickers(function (error, response) {
-                    if (error) {
-                        console.error("failed to cleanup tickerData");
-                    } else {
-                        console.log("successfully deleted tickerData");
-                        console.log(response);
-                    }
-                })
-            })
-        }
-
         // Get all available coins from CoinMarketCap API.
         axios.get(process.env.COINMARKET_API).then((apiResponse) => {
 
             if (apiResponse.status === 200) {
 
                 console.log("fetched API data - attempting to cleanup data and load fresh:")
-
-
-                //blocking call to refresh ticker-data
-                cleanupTickerDataBeforeRefresh();
 
                 let coins = {};
 
@@ -66,10 +47,7 @@ module.exports = {
                     tickerdataEntityObject.totalSupply = coin.total_supply;
                     tickerdataEntityObject.availableSupply = coin.available_supply;
 
-                    console.log("loading fresh data:"+tickerdataEntityObject)
-
-
-                    tickerdataEntityObject.save();
+                    tickerDataRef.saveOrUpdateEntity(tickerdataEntityObject);
                 });
 
             }

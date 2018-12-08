@@ -1,20 +1,7 @@
 //grab dependencies
 require('dotenv').config();
+require("babel-polyfill");
 
-
-const express = require('express'),
-    app = express(),
-    port = process.env.PORT || 3000,
-    expressLayouts = require('express-ejs-layouts');
-
-
-let morgan = require('morgan');
-
-//don't show the log when it is test
-if(process.env.nodeEnvironment !== 'test') {
-    //use morgan to log at command line
-    app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
-}
 
 // Configuring the database
 const dbConfig = require('./config/database.config.js');
@@ -30,6 +17,26 @@ mongoose.connect(process.env.DATABASE_URL)
     console.log('Could not connect to the database. Exiting now...'+err);
     process.exit();
 });
+
+const express = require('express'),
+    app = express(),
+    port = process.env.PORT || 3000,
+    expressLayouts = require('express-ejs-layouts');
+
+
+const cors = require('cors');
+
+app.use(cors({origin: '*'}));
+
+
+let morgan = require('morgan');
+
+//don't show the log when it is test
+if(process.env.nodeEnvironment !== 'test') {
+    //use morgan to log at command line
+    app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
+}
+
 
 
 
@@ -47,9 +54,6 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(require('./app/routes/routes'));
 app.use(expressLayouts);
 
-const cors = require('cors');
-
-app.use(cors());
 
 const errorHandler = require('./app/authentication/error-handler');
 
@@ -87,9 +91,11 @@ app.use(function(err, req, res, next) {
 });
 
 
-//import ticker data from coinbase-API to database
-var refreshTool = require("./app/controllers/tickerdata.controller");
-refreshTool.loadTickerData();
+process.on('unhandledRejection', error => {
+    // Will print "unhandledRejection err is not defined"
+    console.log('unhandledRejection', error.message);
+});
+
 
 
 //start server
@@ -98,6 +104,16 @@ app.listen(port,() => {
     console.log(`cryptodashboard App listening on http://localhost:${port}`);
 
 });
+
+
+
+//import ticker data from coinbase-API to database
+var refreshTool = require("./app/controllers/tickerdata.controller");
+
+
+refreshTool.loadTickerData();
+
+
 
 
 module.exports = app;

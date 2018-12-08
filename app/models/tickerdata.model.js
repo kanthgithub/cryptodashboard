@@ -14,12 +14,13 @@ const tickerdataSchema = mongoose.Schema({
     timestamps: true
 });
 
-var tickerDataEntity = module.exports = mongoose.model('tickerdata', tickerdataSchema);
+var tickerDataEntity = module.exports = mongoose.model('cryptotickerstatic', tickerdataSchema,'cryptotickerstatic');
 
 
-module.exports.getTickerBySymbol = function(symbol, callback) {
+module.exports.getTickerBySymbol = function(symbol) {
     var query = {symbol: symbol};
-    tickerDataEntity.findOne(query, callback);
+    console.log("getTickerBySymbol: "+symbol)
+    return tickerDataEntity.findOne(query);
 };
 
 module.exports.getTickerById = function(id, callback) {
@@ -37,26 +38,32 @@ module.exports.getAllTickers = function(callback) {
 };
 
 module.exports.deleteAllTickers = function (callback) {
-    tickerDataEntity.deleteMany({},callback);
+
+    console.log("inside model - to delete all entities");
+
+    tickerDataEntity.remove({}).exec().then(function(){
+
+    tickerDataEntity.find().then(function(result){
+        if(result) {
+            console.log("found after delete: " + result);
+        }else{
+            console.log("deleted successfully")
+        }
+    })});
+
 }
 
-module.exports.saveOrUpdate = function (tickerDataEntityToPersist) {
+module.exports.saveOrUpdateEntity = function (tickerDataEntityToPersist) {
 
-    exports.getTickerBySymbol(tickerDataEntityToPersist.symbol).then((model) => {
-                                return Object.assign(model,
-                                    {
-                                        totalSupply: tickerDataEntityToPersist.symbol,
-                                        maximumSupply: tickerDataEntityToPersist.maximumSupply,
-                                        rank: tickerDataEntityToPersist.rank,
-                                        availableSupply: tickerDataEntityToPersist.availableSupply
-                                    }).then( (model) => {
-                                                return model.save();
-                                            })
-                                      .then((updatedModel) => {
-                                            return updatedModel;
-                                      }).catch((err) => {
-                                          return null;
-                                    });
-                            });
-
+    tickerDataEntity.update(
+        {symbol: tickerDataEntityToPersist.symbol},
+        {upsert: true, safe: false},
+        function(err,data){
+            if (err){
+                console.log(err);
+            }else{
+                //console.log("score succeded");
+            }
+        }
+    );
 }
