@@ -11,7 +11,7 @@ const express = require('express'),
 router.get('/',mainController.showHome);
 
 //get latest marketInformation
-router.get('/marketData',marketdataController.showMarketData);
+router.get('/marketData',marketdataController.getMarketData);
 
 //get ticker details available for marketUpdates
 router.get('/tickerData',tickerdataController.getTickerData);

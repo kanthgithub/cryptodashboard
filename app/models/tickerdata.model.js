@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 require('mongoose-long')(mongoose);
 var Long = mongoose.Schema.Types.Long;
+const await = require('await');
+
 
 const tickerdataSchema = mongoose.Schema({
     id: String,
@@ -19,7 +21,6 @@ var tickerDataEntity = module.exports = mongoose.model('cryptotickerstatic', tic
 
 module.exports.getTickerBySymbol = function(symbol) {
     var query = {symbol: symbol};
-    console.log("getTickerBySymbol: "+symbol)
     return tickerDataEntity.findOne(query);
 };
 
@@ -33,8 +34,8 @@ module.exports.getTickerByRank = function(rank, callback) {
     tickerDataEntity.findOne(query, callback);
 };
 
-module.exports.getAllTickers = function(callback) {
-    tickerDataEntity.find(callback);
+module.exports.getAllTickers = function() {
+    return tickerDataEntity.find();
 };
 
 module.exports.deleteAllTickers = function (callback) {
@@ -51,18 +52,16 @@ module.exports.deleteAllTickers = function (callback) {
         }
     })});
 
-}
+};
 
 module.exports.saveOrUpdateEntity = function (tickerDataEntityToPersist) {
 
     tickerDataEntity.update(
         {symbol: tickerDataEntityToPersist.symbol},
-        {upsert: true, safe: false},
+        {upsert: true, safe: true},
         function(err,data){
             if (err){
                 console.log(err);
-            }else{
-                //console.log("score succeded");
             }
         }
     );
