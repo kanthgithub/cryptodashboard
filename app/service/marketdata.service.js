@@ -7,9 +7,7 @@ const client = new CoinMarketCap(apiKey)
 
 module.exports = {
 
-    getMarketData: (request,response) => {
-
-        var preferences = request.query.preferences;
+    publishMarketDataSnapshot: (preferences,connection) => {
 
         if(!preferences){
             preferences =process.env.defaultPreferences;
@@ -17,12 +15,28 @@ module.exports = {
 
         var marketData;
 
-            client.getQuotes({symbol: preferences})
+        client.getQuotes({symbol: preferences})
             .then((apiResponse) => {
-                                    marketData = module.exports.translateMarketDataWithPreferences(apiResponse,preferences);
-                                    response.send(marketData);
+                marketData = module.exports.translateMarketDataWithPreferences(apiResponse,preferences);
+                console.log("marketData extracted in service: "+JSON.stringify(marketData));
+                 connection.send(JSON.stringify(marketData));
             })
             .catch((error) => {console.log("error while extracting marketData: "+error); response.send("{}")});
+
+    },
+
+    translateMarketDataWithPreferences:  (apiResponse, preferences) => {
+
+        let preferencesArray = preferences.split(",");
+
+        return preferencesArray.map((preference) => {
+            var marketDataEntityObject = module.exports.translateAPIResponseWithPreferences(apiResponse, preference);
+
+            return {
+                symbol: preference,
+                marketdata: marketDataEntityObject
+            }
+        });
 
     },
 
@@ -52,23 +66,6 @@ module.exports = {
         marketDataEntityObject.last_updated = apiResponseEntity.quote.USD.last_updated;
 
         return marketDataEntityObject;
-    },
-
-    translateMarketDataWithPreferences:  (apiResponse, preferences) => {
-
-        var marketDataResponse = {};
-
-        let preferencesArray = preferences.split(",");
-
-        return preferencesArray.map((preference) => {
-            var marketDataEntityObject = module.exports.translateAPIResponseWithPreferences(apiResponse, preference);
-
-            return {
-                symbol: preference,
-                marketdata: marketDataEntityObject
-            }
-        });
-
     }
 
 

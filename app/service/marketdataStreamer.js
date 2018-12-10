@@ -1,15 +1,51 @@
-const marketDataRef = require('../models/marketdata.model')
-
+var http = require('http');
+var server = require('websocket').server;
 const CoinMarketCap = require('coinmarketcap-api')
 const apiKey = process.env.COINMARKET_API_KEY
 const client = new CoinMarketCap(apiKey)
+const marketDataRef = require('../models/marketdata.model')
 
 
 module.exports = {
 
-    getMarketData: (request,response) => {
+    startWebSocketServer : () => {
 
-        var preferences = request.query.preferences;
+        var connections = new Set(); // Storage of connections
+
+        var socket = new server({
+            httpServer: http.createServer().listen(process.env.WS_PORT)
+        });
+
+        console.log("WebSocket running on ws://localhost:"+process.env.WS_PORT);
+
+        initInterval();
+
+        socket.on('request', function(request) {
+            var connection = request.accept(null, request.origin);
+
+            connections.add(connection);
+
+            module.exports.publishMarketDataSnapshot(null,connections);
+
+            connection.on('close', function() {
+                connections.delete(connection);
+            });
+
+        });
+
+        function initInterval(){
+
+            setInterval(function(){
+
+                if(connections){
+                    module.exports.publishMarketDataSnapshot(null,connections);
+                    };
+            }, 30000);
+        };
+    },
+
+
+    publishMarketDataSnapshot: (preferences,connections) => {
 
         if(!preferences){
             preferences =process.env.defaultPreferences;
@@ -17,12 +53,31 @@ module.exports = {
 
         var marketData;
 
-            client.getQuotes({symbol: preferences})
+        client.getQuotes({symbol: preferences})
             .then((apiResponse) => {
-                                    marketData = module.exports.translateMarketDataWithPreferences(apiResponse,preferences);
-                                    response.send(marketData);
+                marketData = module.exports.translateMarketDataWithPreferences(apiResponse,preferences);
+                var jsonResponse = JSON.stringify(marketData);
+
+                connections.forEach(function (connection) {
+                    connection.send(jsonResponse);
+                });
             })
             .catch((error) => {console.log("error while extracting marketData: "+error); response.send("{}")});
+
+    },
+
+    translateMarketDataWithPreferences:  (apiResponse, preferences) => {
+
+        let preferencesArray = preferences.split(",");
+
+        return preferencesArray.map((preference) => {
+            var marketDataEntityObject = module.exports.translateAPIResponseWithPreferences(apiResponse, preference);
+
+            return {
+                symbol: preference,
+                marketdata: marketDataEntityObject
+            }
+        });
 
     },
 
@@ -52,24 +107,7 @@ module.exports = {
         marketDataEntityObject.last_updated = apiResponseEntity.quote.USD.last_updated;
 
         return marketDataEntityObject;
-    },
-
-    translateMarketDataWithPreferences:  (apiResponse, preferences) => {
-
-        var marketDataResponse = {};
-
-        let preferencesArray = preferences.split(",");
-
-        return preferencesArray.map((preference) => {
-            var marketDataEntityObject = module.exports.translateAPIResponseWithPreferences(apiResponse, preference);
-
-            return {
-                symbol: preference,
-                marketdata: marketDataEntityObject
-            }
-        });
-
     }
 
 
-};
+}

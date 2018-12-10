@@ -38,6 +38,11 @@ module.exports.getAllTickers = function() {
     return tickerDataEntity.find();
 };
 
+
+module.exports.getAllTickersAsync = async function() {
+    return  await tickerDataEntity.find().exec();
+};
+
 module.exports.deleteAllTickers = function (callback) {
 
     console.log("inside model - to delete all entities");

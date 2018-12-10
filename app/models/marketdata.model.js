@@ -35,3 +35,13 @@ module.exports.captureMarketDataSnapshot = function (marketDataEntityToPersist) 
     marketDataEntityToPersist.save();
 
 }
+
+module.exports.getLatestMarketDataSnapshot = function(){
+
+
+    mark
+
+
+}
+
+

@@ -2,11 +2,8 @@
 require('dotenv').config();
 require("babel-polyfill");
 
-
 // Configuring the database
-const dbConfig = require('./config/database.config.js');
 const mongoose = require('mongoose');
-
 mongoose.Promise = global.Promise;
 
 // Connecting to the database
@@ -38,8 +35,6 @@ if(process.env.nodeEnvironment !== 'test') {
 }
 
 
-
-
 //configure application
 var logger = require('morgan');
 var bodyParser = require('body-parser');
@@ -65,13 +60,14 @@ var path = require('path');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
 app.use(logger('dev'));
+
+//express-json
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+//cookie parser
 var cookieParser = require('cookie-parser');
-
 app.use(cookieParser());
 
 //tell express on where to look for static-assets
@@ -90,30 +86,23 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-
+//unhandled Rejection (GlobalRejectionHandler)
 process.on('unhandledRejection', error => {
     // Will print "unhandledRejection err is not defined"
     console.log('unhandledRejection', error.message);
 });
 
-
-
 //start server
 app.listen(port,() => {
-
     console.log(`cryptodashboard App listening on http://localhost:${port}`);
-
 });
-
-
 
 //import ticker data from coinbase-API to database
 var refreshTool = require("./app/controllers/tickerdata.controller");
-
-
 refreshTool.loadTickerData();
 
-
-
+//import market Streamer
+var marketStreamer = require("./app/service/marketdataStreamer");
+marketStreamer.startWebSocketServer();
 
 module.exports = app;
