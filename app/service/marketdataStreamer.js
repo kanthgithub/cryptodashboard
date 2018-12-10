@@ -1,5 +1,5 @@
 var http = require('http');
-var server = require('websocket').server;
+//var server = require('websocket').server;
 const CoinMarketCap = require('coinmarketcap-api')
 const apiKey = process.env.COINMARKET_API_KEY
 const client = new CoinMarketCap(apiKey)
@@ -8,19 +8,15 @@ const marketDataRef = require('../models/marketdata.model')
 
 module.exports = {
 
-    startWebSocketServer : () => {
+    startWebSocketServer : (websocketserver) => {
 
         var connections = new Set(); // Storage of connections
 
-        var socket = new server({
-            httpServer: http.createServer().listen(process.env.WS_PORT)
-        });
-
-        console.log("WebSocket running on ws://localhost:"+process.env.WS_PORT);
+        console.log("WebSocket running on :"+JSON.stringify(websocketserver));
 
         initInterval();
 
-        socket.on('request', function(request) {
+        websocketserver.on('request', function(request) {
             var connection = request.accept(null, request.origin);
 
             connections.add(connection);

@@ -92,17 +92,26 @@ process.on('unhandledRejection', error => {
     console.log('unhandledRejection', error.message);
 });
 
-//start server
-app.listen(port,() => {
-    console.log(`cryptodashboard App listening on http://localhost:${port}`);
+//import market Streamer
+
+const http = require('http');
+
+const httpServer = http.createServer(app);
+
+const WebSocket =  require('websocket');
+
+const wss = new WebSocket.server({
+    'httpServer': httpServer
 });
+
+httpServer.listen(port)
+
+var marketStreamer = require("./app/service/marketdataStreamer");
+marketStreamer.startWebSocketServer(wss);
 
 //import ticker data from coinbase-API to database
 var refreshTool = require("./app/controllers/tickerdata.controller");
 refreshTool.loadTickerData();
 
-//import market Streamer
-var marketStreamer = require("./app/service/marketdataStreamer");
-marketStreamer.startWebSocketServer();
 
 module.exports = app;

@@ -58,7 +58,8 @@
     "sync": "^0.2.5",
     "underscore": "^1.9.1",
     "url": "^0.11.0",
-    "websocket": "^1.0.28"
+    "websocket": "^1.0.28",
+    "ws": "^6.1.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
