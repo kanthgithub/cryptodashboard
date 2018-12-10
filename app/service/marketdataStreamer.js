@@ -4,7 +4,7 @@ const CoinMarketCap = require('coinmarketcap-api')
 const apiKey = process.env.COINMARKET_API_KEY
 const client = new CoinMarketCap(apiKey)
 const marketDataRef = require('../models/marketdata.model')
-
+var mcache = require('memory-cache');
 
 module.exports = {
 
@@ -78,9 +78,35 @@ module.exports = {
     },
 
     translateAPIResponseWithPreferences: function (apiResponse, preference) {
+
+        console.log("apiResponse: "+JSON.stringify(apiResponse));
+
         let apiResponseEntity = apiResponse.data[preference]
 
+        var apicacheData = mcache.get(apiResponseEntity.symbol);
+
         var marketDataEntityObject = new marketDataRef();
+
+        marketDataEntityObject.goingup = false;
+        marketDataEntityObject.goingdown = false;
+
+        if(apicacheData){
+
+            var oldPx = apicacheData.price;
+
+            var newPx = apiResponseEntity.quote.USD.price;
+
+            if(oldPx && newPx) {
+                if (newPx > oldPx) {
+                    marketDataEntityObject.goingup = true;
+                    marketDataEntityObject.goingdown = false;
+                } else if (newPx < oldPx) {
+                    marketDataEntityObject.goingup = false;
+                    marketDataEntityObject.goingdown = true;
+                }
+            }
+        }
+
         marketDataEntityObject.id = apiResponseEntity.id;
         marketDataEntityObject.name = apiResponseEntity.name;
         marketDataEntityObject.symbol = apiResponseEntity.symbol;
@@ -101,6 +127,8 @@ module.exports = {
         marketDataEntityObject.percent_change_7d = apiResponseEntity.quote.USD.percent_change_7d;
         marketDataEntityObject.market_cap = apiResponseEntity.quote.USD.market_cap;
         marketDataEntityObject.last_updated = apiResponseEntity.quote.USD.last_updated;
+
+        mcache.put(marketDataEntityObject.symbol,marketDataEntityObject,30000);
 
         return marketDataEntityObject;
     }

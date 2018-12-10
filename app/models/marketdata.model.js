@@ -22,7 +22,9 @@ const marketdataSchema = mongoose.Schema({
     "percent_change_24h": {type: Number, default: 0},
     "percent_change_7d": {type: Number, default: 0},
     "market_cap": {type: Number, default: 0},
-    "last_updated": String
+    "last_updated": String,
+    "goingup" : String,
+    "goingdown" : String
     }, {
         timestamps: true
     });
