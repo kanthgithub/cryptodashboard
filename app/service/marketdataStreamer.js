@@ -97,12 +97,17 @@ module.exports = {
             var newPx = apiResponseEntity.quote.USD.price;
 
             if(oldPx && newPx) {
+
+                console.log("symbol: "+apiResponseEntity.symbol+" - comparing oldPx :"+oldPx+" vs newPx: "+newPx)
+
                 if (newPx > oldPx) {
                     marketDataEntityObject.goingup = true;
                     marketDataEntityObject.goingdown = false;
+                    console.log("symbol: "+apiResponseEntity.symbol+" is going-up")
                 } else if (newPx < oldPx) {
                     marketDataEntityObject.goingup = false;
                     marketDataEntityObject.goingdown = true;
+                    console.log("symbol: "+apiResponseEntity.symbol+" is going-down")
                 }
             }
         }
