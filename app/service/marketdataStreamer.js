@@ -1,5 +1,3 @@
-var http = require('http');
-//var server = require('websocket').server;
 const CoinMarketCap = require('coinmarketcap-api')
 const apiKey = process.env.COINMARKET_API_KEY
 const client = new CoinMarketCap(apiKey)
@@ -19,6 +17,8 @@ module.exports = {
         websocketserver.on('request', function(request) {
             var connection = request.accept(null, request.origin);
 
+            console.log("origin connection: "+request.origin);
+
             connections.add(connection);
 
             module.exports.publishMarketDataSnapshot(null,connections);
@@ -35,8 +35,8 @@ module.exports = {
 
                 if(connections){
                     module.exports.publishMarketDataSnapshot(null,connections);
-                    };
-            }, 30000);
+                };
+            }, 300000);
         };
     },
 
@@ -55,6 +55,7 @@ module.exports = {
                 var jsonResponse = JSON.stringify(marketData);
 
                 connections.forEach(function (connection) {
+                    console.log("sending message to connection: "+connection);
                     connection.send(jsonResponse);
                 });
             })

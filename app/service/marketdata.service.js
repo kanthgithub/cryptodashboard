@@ -19,7 +19,7 @@ module.exports = {
             .then((apiResponse) => {
                 marketData = module.exports.translateMarketDataWithPreferences(apiResponse,preferences);
                 console.log("marketData extracted in service: "+JSON.stringify(marketData));
-                 connection.send(JSON.stringify(marketData));
+                 connection.emit(JSON.stringify(marketData));
             })
             .catch((error) => {console.log("error while extracting marketData: "+error); response.send("{}")});
 
