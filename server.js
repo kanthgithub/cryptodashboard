@@ -23,7 +23,7 @@ const express = require('express'),
 
 const cors = require('cors');
 
-app.use(cors({origin: '*'}));
+app.use(cors({origin: '*',withCredentials: false}));
 
 
 let morgan = require('morgan');
