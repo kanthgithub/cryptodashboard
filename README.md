@@ -245,7 +245,15 @@ https://cryptostreamingapi.herokuapp.com/marketData?preferences=BTC,ETH,XRP
 
 ```
 
-
+<h3>Local deployment:</h3>
+<ol>
+  <li>Enter command line</li>
+  <li>Clone repository: <code>git clone https://github.com/kanthgithub/cryptodashboard.git</code></li>
+  <li>Enter repository: <code>cd cryptodashboard</code></li>
+  <li>Install packages: <code>npm install</code></li>
+  <li>Run with: <code>npm start</code></li>
+  <li>Browse: <code>http://127.0.0.1:3000</code></li>
+</ol>
 
 
 ## Dependencies:
