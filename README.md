@@ -1,21 +1,25 @@
 # Crypto Streaming API:
 
-Features:
+## Features:
 
 - API to get the crypto-tickers from coinmarketcap API
+- Streamer to stream marketdata snapshot for tickers
 
-  - references:
-  
-    - Ticker Static Data
-    
-      - Onload of the service, will load / update the tickerStatic
-      - Tickerstatic is loaded from coinmarket cap API
-      - Axios is the library used to make GET call from the API
+
+## Functional Flow:
       
+  - Onload of the service, will load / update the tickerStatic
+  - Tickerstatic is loaded from coinmarket cap API
+  - Axios is the library used to make GET call from the API
+      
+ - references:      
       
    - COINMARKET_API_TICKER = https://api.coinmarketcap.com/v1/ticker
  
  
+-Technical Details:
+ 
+- Code snippets :
       
  ```js
    
@@ -280,3 +284,8 @@ https://cryptostreamingapi.herokuapp.com/marketData?preferences=BTC,ETH,XRP
 - mocha: javascript framework for Node.js which allows Asynchronous testing.
 - chai: assertion library for tests
 
+## TODO:
+
+- Tests end to end
+- User Preference Registration
+- API authentication via JWT token
